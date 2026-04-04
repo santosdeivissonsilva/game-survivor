@@ -30,13 +30,27 @@ public class ControlScreen extends ScreenAdapter {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(Color.BLACK);
+
+        float centerx = viewport.getWorldWidth() / 2;
+        float y = viewport.getWorldHeight() / 2 + 100;
         
         viewport.apply();
         batch.setProjectionMatrix(viewport.getCamera().combined);
         batch.begin();
+        layout.setText(font, "CONTROLS");
+        font.draw(batch, layout, centerx - layout.width / 2, y);
+        y -= 50;
 
         layout.setText(font, "W / S / A / D - Move");
-        font.draw(batch, layout, viewport.getWorldWidth() / 2 - layout.width / 2, viewport.getWorldHeight() / 2 + 100);
+        font.draw(batch, layout, centerx - layout.width / 2, y);
+        y -= 40;
+
+        layout.setText(font, "R - Restart (when dead)");
+        font.draw(batch, layout, centerx - layout.width / 2, y);
+        y -= 70;
+
+        layout.setText(font, "Press SPACE to start");
+        font.draw(batch, layout, centerx - layout.width / 2, y);
 
         batch.end();
     }
