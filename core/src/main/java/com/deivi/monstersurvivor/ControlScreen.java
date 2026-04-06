@@ -1,5 +1,7 @@
 package com.deivi.monstersurvivor;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -29,6 +31,12 @@ public class ControlScreen extends ScreenAdapter {
 
     @Override
     public void render(float delta) {
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            game.setScreen(new GameScreen(game));
+            dispose();
+            return;
+        }
+
         ScreenUtils.clear(Color.BLACK);
 
         float centerx = viewport.getWorldWidth() / 2;
