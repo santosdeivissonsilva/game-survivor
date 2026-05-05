@@ -13,7 +13,7 @@ public class Player extends GameObject {
     private final Viewport gamViewport;
     private float life = LIFE;
     private final Vector2 moveDirection = new Vector2();
-    
+
     public Player(float x, float y, Viewport gamViewport, Texture texture) {
         super(x, y, texture.getWidth() * SCALE, texture.getHeight() * SCALE, texture);
         this.gamViewport = gamViewport;
@@ -30,11 +30,12 @@ public class Player extends GameObject {
     }
 
     private void move(float deltaTime) {
-        if (moveDirection.isZero()) return;
+        if (moveDirection.isZero())
+            return;
 
         float newX = rect.getX() + moveDirection.x * SPEED * deltaTime;
         float newY = rect.getY() + moveDirection.y * SPEED * deltaTime;
-        
+
         newX = MathUtils.clamp(newX, 0, gamViewport.getWorldHeight() - rect.getWidth());
         newY = MathUtils.clamp(newY, 0, gamViewport.getWorldHeight() - rect.getHeight());
 
@@ -45,4 +46,19 @@ public class Player extends GameObject {
         moveDirection.set(direction);
     }
 
+    public void subLife(float amount) {
+        this.life -= amount;
+    }
+
+    public float getLife() {
+        return Math.max(life, 0f);
+    }
+
+    public boolean isAlive() {
+        return life > 0f;
+    }
+
+    public boolean isDead() {
+        return life <= 0;
+    }
 }
