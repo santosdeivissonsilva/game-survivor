@@ -36,7 +36,7 @@ public class Player extends GameObject {
         float newX = rect.getX() + moveDirection.x * SPEED * deltaTime;
         float newY = rect.getY() + moveDirection.y * SPEED * deltaTime;
 
-        newX = MathUtils.clamp(newX, 0, gamViewport.getWorldHeight() - rect.getWidth());
+        newX = MathUtils.clamp(newX, 0, gamViewport.getWorldWidth() - rect.getWidth());
         newY = MathUtils.clamp(newY, 0, gamViewport.getWorldHeight() - rect.getHeight());
 
         rect.setPosition(newX, newY);

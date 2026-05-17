@@ -60,7 +60,7 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void resetGame() {
-        player.reset(WORD_WIDTH / 2, WORD_HEIGHT / 2);
+        player.reset(WORD_WIDTH / 2f, WORD_HEIGHT / 2f);
 
         enemies.clear();
         enemySpawnTimer = 0f;
