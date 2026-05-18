@@ -8,7 +8,6 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 public class Enemy extends GameObject {
     private static final float SCALE = 1 / 32f;
     private static final float SPEED = 1.5f;
-    private static final Vector2 TMP_VEC2 = new Vector2();
 
     private final Player player;
 

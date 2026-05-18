@@ -6,6 +6,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class GameObject {
+    protected static final Vector2 TMP_VEC2 = new Vector2();
 
     protected final Rectangle rect;
     protected Texture texture;

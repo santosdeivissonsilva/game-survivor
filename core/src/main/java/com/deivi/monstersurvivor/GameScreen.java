@@ -5,6 +5,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
@@ -27,6 +28,9 @@ public class GameScreen extends ScreenAdapter {
     private final Texture bgdTexture = new Texture(Gdx.files.internal("bgd.png"));
     private final Texture playerTexture = new Texture(Gdx.files.internal("player.png"));
     private final Texture enemyTexture = new Texture(Gdx.files.internal("slime.png"));
+    private final Array<Texture> attackTextures = loadAttackTextures();
+    private final Animation<Texture> attackAnimation = new Animation<>(1/12f, attackTextures);
+
     private final Viewport gameViewport = new ExtendViewport(WORD_WIDTH, WORD_HEIGHT);
     private final Viewport uiViewport = new ScreenViewport();
     private final GlyphLayout layout = new GlyphLayout();
@@ -36,16 +40,26 @@ public class GameScreen extends ScreenAdapter {
             WORD_WIDTH / 2f,
             WORD_HEIGHT / 2f,
             gameViewport,
-            playerTexture);
+            playerTexture,
+            attackAnimation);
 
     private final Array<Enemy> enemies = new Array<>();
     private float enemySpawnTimer;
+    private int score;
 
     public GameScreen(MonstersSuvivor game) {
         this.batch = game.getBatch();
         this.font = game.getFont();
 
         bgdTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
+    }
+
+    private Array<Texture> loadAttackTextures() {
+        var textures = new Array<Texture>();
+        for(int i=0; i<14; i++) {
+            textures.add(new Texture(Gdx.files.internal(String.format("slash_%02d.png", i))));
+        }
+        return textures;
     }
 
     @Override
@@ -64,6 +78,7 @@ public class GameScreen extends ScreenAdapter {
 
         enemies.clear();
         enemySpawnTimer = 0f;
+        score = 0;
     }
 
     private void processInput() {
@@ -98,6 +113,17 @@ public class GameScreen extends ScreenAdapter {
     }
 
     private void checkCollision(float deltaTime) {
+        for (Attack attack : player.getAttacks()) {
+            var iterator = enemies.iterator();
+            while (iterator.hasNext()) {
+                Enemy enemy = iterator.next();
+                if(attack.overlaps(enemy)) {
+                    iterator.remove();
+                    ++score;
+                }
+            }
+        }
+
         int numHits = 0;
         for (Enemy enemy : enemies) {
             if (player.overlaps(enemy)) {
@@ -121,6 +147,9 @@ public class GameScreen extends ScreenAdapter {
         for (Enemy enemy : enemies) {
             enemy.draw(batch);
         }
+        for (Attack attack : player.getAttacks()) {
+            attack.draw(batch);
+        }
         player.draw(batch);
 
         batch.end();
@@ -129,6 +158,7 @@ public class GameScreen extends ScreenAdapter {
         batch.setProjectionMatrix(uiViewport.getCamera().combined);
         batch.begin();
         font.draw(batch, "Life: " + String.format("%.1f", player.getLife()), 20f, uiViewport.getWorldHeight() - 60);
+        font.draw(batch, "Score: " + score, 20f, uiViewport.getWorldHeight() - 20);
         if (player.isDead()) {
             layout.setText(font, "GAME OVER");
             font.draw(batch, layout, uiViewport.getWorldWidth() / 2 - layout.width / 2,
@@ -170,5 +200,6 @@ public class GameScreen extends ScreenAdapter {
         bgdTexture.dispose();
         playerTexture.dispose();
         enemyTexture.dispose();
+        attackTextures.forEach(Texture::dispose);
     }
 }
