@@ -1,5 +1,6 @@
 package com.deivi.monstersurvivor;
 
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.math.MathUtils;
@@ -20,15 +21,18 @@ public class Player extends GameObject {
     private float attackTimer;
     private final Array<Attack> attacks = new Array<>();
     private final Animation<Texture> attaclAnimation;
+    private final Sound attackSfx;
 
     public Player(float x,
                 float y,
                 Viewport gamViewport,
                 Texture texture,
-                Animation<Texture> attackAnimation) {
+                Animation<Texture> attackAnimation,
+                Sound slashSfx) {
         super(x, y, texture.getWidth() * SCALE, texture.getHeight() * SCALE, texture);
         this.gamViewport = gamViewport;
         this.attaclAnimation = attackAnimation;
+        this.attackSfx = slashSfx;
     }
 
     public void reset(float x, float y) {
@@ -42,6 +46,7 @@ public class Player extends GameObject {
     void update(float deltaTime) {
         if(canAttack(deltaTime)) {
             var playerCenter = getCenter(TMP_VEC2);
+            attackSfx.play();
             attacks.add(new Attack(playerCenter, lastDirection, attaclAnimation));
         }
 

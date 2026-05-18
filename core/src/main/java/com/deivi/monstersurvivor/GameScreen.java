@@ -3,6 +3,8 @@ package com.deivi.monstersurvivor;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.ScreenAdapter;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -30,6 +32,8 @@ public class GameScreen extends ScreenAdapter {
     private final Texture enemyTexture = new Texture(Gdx.files.internal("slime.png"));
     private final Array<Texture> attackTextures = loadAttackTextures();
     private final Animation<Texture> attackAnimation = new Animation<>(1/12f, attackTextures);
+    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("nightsplitter.mp3"));
+    private final Sound slashSfx = Gdx.audio.newSound(Gdx.files.internal("slash.wav"));
 
     private final Viewport gameViewport = new ExtendViewport(WORD_WIDTH, WORD_HEIGHT);
     private final Viewport uiViewport = new ScreenViewport();
@@ -41,7 +45,8 @@ public class GameScreen extends ScreenAdapter {
             WORD_HEIGHT / 2f,
             gameViewport,
             playerTexture,
-            attackAnimation);
+            attackAnimation,
+            slashSfx);
 
     private final Array<Enemy> enemies = new Array<>();
     private float enemySpawnTimer;
@@ -79,6 +84,10 @@ public class GameScreen extends ScreenAdapter {
         enemies.clear();
         enemySpawnTimer = 0f;
         score = 0;
+
+        music.stop();
+        music.setLooping(true);
+        music.play();
     }
 
     private void processInput() {
@@ -201,5 +210,7 @@ public class GameScreen extends ScreenAdapter {
         playerTexture.dispose();
         enemyTexture.dispose();
         attackTextures.forEach(Texture::dispose);
+        music.dispose();
+        slashSfx.dispose();
     }
 }
