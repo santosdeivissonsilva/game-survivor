@@ -11,6 +11,7 @@ import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -26,6 +27,7 @@ public class GameScreen extends ScreenAdapter {
 
     private final Batch batch;
     private final BitmapFont font;
+    private final ShapeRenderer shapeRenderer;
 
     private final Texture bgdTexture = new Texture(Gdx.files.internal("bgd.png"));
     private final Texture playerTexture = new Texture(Gdx.files.internal("player.png"));
@@ -55,6 +57,7 @@ public class GameScreen extends ScreenAdapter {
     public GameScreen(MonstersSuvivor game) {
         this.batch = game.getBatch();
         this.font = game.getFont();
+        this.shapeRenderer = game.getShapeRenderer();
 
         bgdTexture.setWrap(Texture.TextureWrap.Repeat, Texture.TextureWrap.Repeat);
     }
@@ -163,6 +166,8 @@ public class GameScreen extends ScreenAdapter {
 
         batch.end();
 
+        drawDebug();
+
         uiViewport.apply();
         batch.setProjectionMatrix(uiViewport.getCamera().combined);
         batch.begin();
@@ -177,6 +182,19 @@ public class GameScreen extends ScreenAdapter {
                     uiViewport.getWorldHeight() / 2 - 30);
         }
         batch.end();
+    }
+
+    private void drawDebug() {
+        shapeRenderer.setProjectionMatrix(gameViewport.getCamera().combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
+        for (Enemy enemy : enemies) {
+            enemy.drawDebug(shapeRenderer, Color.RED);
+        }
+        for (Attack attack : player.getAttacks()) {
+            attack.drawDebug(shapeRenderer, Color.YELLOW);
+        }
+        player.drawDebug(shapeRenderer, Color.GREEN);
+        shapeRenderer.end();
     }
 
     private void updateLogic(float deltaTime) {

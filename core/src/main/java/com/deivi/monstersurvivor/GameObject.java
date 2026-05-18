@@ -1,7 +1,9 @@
 package com.deivi.monstersurvivor;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -36,4 +38,9 @@ public abstract class GameObject {
     }
 
     abstract void update(float deltaTime);
+
+    public void drawDebug(ShapeRenderer shapeRenderer, Color color) {
+        shapeRenderer.setColor(color);
+        shapeRenderer.rect(rect.x, rect.y, rect.width, rect.height);
+    }
 }

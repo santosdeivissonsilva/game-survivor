@@ -7,14 +7,17 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class MonstersSuvivor extends Game {
     private Batch batch;
+    private ShapeRenderer shapeRenderer;
     private BitmapFont font;
 
     @Override
     public void create() {
         batch = new SpriteBatch();
+        shapeRenderer = new ShapeRenderer();
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("CherryCreamSoda-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -31,6 +34,7 @@ public class MonstersSuvivor extends Game {
         super.dispose();
         batch.dispose();
         font.dispose();
+        shapeRenderer.dispose();
     }
 
     public Batch getBatch() {
@@ -39,5 +43,9 @@ public class MonstersSuvivor extends Game {
 
     public BitmapFont getFont() {
         return font;
+    }
+
+    public ShapeRenderer getShapeRenderer() {
+        return shapeRenderer;
     }
 }
