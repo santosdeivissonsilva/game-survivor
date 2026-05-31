@@ -29,13 +29,13 @@ public class GameScreen extends ScreenAdapter {
     private final BitmapFont font;
     private final ShapeRenderer shapeRenderer;
 
-    private final Texture bgdTexture = new Texture(Gdx.files.internal("bgd.png"));
-    private final Texture playerTexture = new Texture(Gdx.files.internal("player.png"));
-    private final Texture enemyTexture = new Texture(Gdx.files.internal("slime.png"));
+    private final Texture bgdTexture = new Texture(Gdx.files.internal("graphics/bgd.png"));
+    private final Texture playerTexture = new Texture(Gdx.files.internal("graphics/player.png"));
+    private final Texture enemyTexture = new Texture(Gdx.files.internal("graphics/slime.png"));
     private final Array<Texture> attackTextures = loadAttackTextures();
     private final Animation<Texture> attackAnimation = new Animation<>(1/12f, attackTextures);
-    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("nightsplitter.mp3"));
-    private final Sound slashSfx = Gdx.audio.newSound(Gdx.files.internal("slash.wav"));
+    private final Music music = Gdx.audio.newMusic(Gdx.files.internal("audio/music/nightsplitter.mp3"));
+    private final Sound slashSfx = Gdx.audio.newSound(Gdx.files.internal("audio/sounds/slash.wav"));
 
     private final Viewport gameViewport = new ExtendViewport(WORD_WIDTH, WORD_HEIGHT);
     private final Viewport uiViewport = new ScreenViewport();
@@ -65,7 +65,7 @@ public class GameScreen extends ScreenAdapter {
     private Array<Texture> loadAttackTextures() {
         var textures = new Array<Texture>();
         for(int i=0; i<14; i++) {
-            textures.add(new Texture(Gdx.files.internal(String.format("slash_%02d.png", i))));
+            textures.add(new Texture(Gdx.files.internal(String.format("graphics/slash_%02d.png", i))));
         }
         return textures;
     }
