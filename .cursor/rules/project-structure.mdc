@@ -1,0 +1,129 @@
+---
+description: Directory layout, modules, and important files for the Monsters Suvivor libGDX project.
+globs: **/*
+alwaysApply: true
+---
+# Project Structure
+
+Monsters Suvivor is a multi-module [libGDX](https://libgdx.com/) survivor game (Java 20, Gradle). Generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff). Package root: `com.deivi.monstersurvivor`.
+
+## Top-Level Layout
+
+```
+game-survivor/
+├── assets/                  # Shared game assets (source of truth)
+├── core/                    # Platform-agnostic game logic
+├── lwjgl3/                  # Desktop launcher (LWJGL3 backend)
+├── teavm/                   # Web launcher (TeaVM backend)
+├── gradle/                  # Gradle wrapper and daemon config
+├── .cursor/rules/           # Cursor AI rules
+├── build.gradle             # Root Gradle config and shared tasks
+├── settings.gradle          # Subproject list: lwjgl3, core, teavm
+├── gradle.properties        # Versions (gdx, lwjgl3, teavm) and build flags
+├── gradlew / gradlew.bat    # Gradle wrapper scripts
+├── README.md                # Controls, credits, project overview
+└── LICENSE
+```
+
+## Gradle Modules
+
+| Module   | Role | Entry point |
+|----------|------|-------------|
+| `core`   | Shared game code; depends only on libGDX | `MonstersSuvivor.java` |
+| `lwjgl3` | Desktop app; depends on `core` | `Lwjgl3Launcher.java` |
+| `teavm`  | Web build; depends on `core` | `TeaVMBuilder.java` / `TeaVMLauncher.java` |
+
+- **Run desktop:** `./gradlew lwjgl3:run` (working dir is `assets/`)
+- **Run web (dev server):** `./gradlew teavm:runRelease` → http://localhost:8080/
+- **Build desktop JAR:** `./gradlew lwjgl3:jar`
+- **Build native installers:** `./gradlew lwjgl3:package` (Construo)
+
+## Source Files (`core`)
+
+All game logic lives under `core/src/main/java/com/deivi/monstersurvivor/`:
+
+| File | Purpose |
+|------|---------|
+| `MonstersSuvivor.java` | Main `Game` class; owns batch, font, shape renderer; sets initial screen |
+| `ControlScreen.java` | Title / controls screen (SPACE to start) |
+| `GameScreen.java` | Main gameplay loop, spawning, collisions, UI |
+| `GameObject.java` | Abstract base for entities (position, texture, rect, draw) |
+| `Player.java` | Player movement and state |
+| `Enemy.java` | Enemy behavior |
+| `Attack.java` | Slash attack animation and hit detection |
+
+## Platform Launchers
+
+**Desktop (`lwjgl3/src/main/java/com/deivi/monstersurvivor/lwjgl3/`):**
+- `Lwjgl3Launcher.java` — application entry; creates libGDX desktop config
+- `StartupHelper.java` — macOS / JVM startup helpers
+
+**Web (`teavm/src/main/java/com/deivi/monstersurvivor/teavm/`):**
+- `TeaVMBuilder.java` — Gradle-invoked build and dev-server runner
+- `TeaVMLauncher.java` — TeaVM application config
+
+**Desktop extras:**
+- `lwjgl3/icons/` — app icons (`.ico`, `.icns`, `.png`) for packaged builds
+- `lwjgl3/nativeimage.gradle` — Graal Native Image config (when `enableGraalNative=true`)
+
+## Assets (`assets/`)
+
+Shared across backends via `sourceSets.main.resources.srcDirs` in `lwjgl3` and `teavm` build files. Load paths via `Gdx.files.internal()` are relative to the `assets/` root (e.g. `graphics/player.png`).
+
+```
+assets/
+├── graphics/              # Sprites, backgrounds, TextureAtlas (.atlas + .png)
+├── audio/
+│   ├── music/             # Streamed music (.mp3, .ogg)
+│   └── sounds/            # Short effects (.wav)
+├── fonts/                 # TrueType (.ttf) or bitmap (.fnt) fonts
+├── maps/                  # Tiled maps (.tmx) and tilesets
+├── ui/                    # Scene2D UI skins and JSON
+└── assets.txt             # Auto-generated manifest (gitignored)
+```
+
+| Path | Contents |
+|------|----------|
+| `graphics/` | `player.png`, `slime.png`, `bgd.png`, `slash_00.png` … `slash_13.png` |
+| `audio/music/` | `nightsplitter.mp3` |
+| `audio/sounds/` | `slash.wav` |
+| `fonts/` | `CherryCreamSoda-Regular.ttf` |
+| `maps/` | Reserved for Tiled maps |
+| `ui/` | Reserved for Scene2D skins |
+
+The root `build.gradle` registers `generateAssetList`, which rebuilds `assets.txt` before `processResources`.
+
+## Build / Generated Directories (do not edit)
+
+- `build/`, `core/build/`, `lwjgl3/build/`, `teavm/build/` — Gradle output
+- `.gradle/` — Gradle cache
+- `assets/assets.txt` — generated at build time
+
+## Configuration Files
+
+| File | Notes |
+|------|-------|
+| `gradle.properties` | `gdxVersion`, `gdxTeaVMVersion`, `lwjgl3Version`, `projectVersion`, `enableGraalNative` |
+| `core/build.gradle` | libGDX + FreeType dependencies |
+| `lwjgl3/build.gradle` | LWJGL3 backend, Construo packaging, platform JAR tasks |
+| `teavm/build.gradle` | TeaVM backend, `runRelease` / `buildRelease` tasks |
+| `.editorconfig` | Editor formatting defaults |
+| `.gitignore` | Ignores build dirs, IDE files, generated `assets.txt` |
+
+## Conventions
+
+- **New gameplay code** → `core/src/main/java/com/deivi/monstersurvivor/`
+- **New assets** → appropriate subfolder under `assets/` (`graphics/`, `audio/music/`, `audio/sounds/`, `fonts/`, `maps/`, `ui/`); run a Gradle build to refresh `assets.txt`
+- **Desktop-only changes** → `lwjgl3/`
+- **Web-only changes** → `teavm/`
+- **Do not** add platform-specific code to `core`; keep it backend-agnostic
+- Entity classes extend `GameObject`; screens extend libGDX `ScreenAdapter`
+
+## Cursor Rules
+
+```
+.cursor/rules/
+├── cursor-rules.mdc        # How to add/edit rules
+├── self-improvement.mdc    # Rule maintenance guidelines
+└── project-structure.mdc   # This file
+```
